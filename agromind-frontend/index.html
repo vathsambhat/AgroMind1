@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgroMind – AI Disease Detector</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 30px;
+      width: 420px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity:0; transform:translateY(20px); }
+      to { opacity:1; transform:translateY(0); }
+    }
+
+    .loading {
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity:0.5; }
+      50% { opacity:1; }
+      100% { opacity:0.5; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="glass text-white">
+    <h1 class="text-3xl font-bold text-center mb-6 tracking-wide">
+      🌿 AgroMind <br>
+      <span class="text-sm text-gray-300 font-light">AI Disease Detection</span>
+    </h1>
+
+    <input 
+      type="file" 
+      id="imageInput"
+      accept="image/*"
+      class="w-full bg-white/10 border border-white/20 rounded-xl p-3 mb-4 cursor-pointer">
+    
+    <button 
+      onclick="detect()"
+      class="w-full bg-green-500 hover:bg-green-600 transition-all text-white py-3 rounded-xl font-semibold shadow-lg">
+      🚀 Detect Disease
+    </button>
+
+    <div id="loader" class="text-center text-gray-300 loading mt-4 hidden">
+      Analyzing image… 🔍
+    </div>
+
+    <div id="output" class="mt-6 p-5 hidden text-white bg-white/10 rounded-2xl border border-white/20 shadow-xl"></div>
+  </div>
+
+  <script>
+    async function detect() {
+      const file = document.getElementById("imageInput").files[0];
+      if (!file) return alert("Please select an image!");
+
+      const loader = document.getElementById("loader");
+      const output = document.getElementById("output");
+
+      loader.classList.remove("hidden");
+      output.classList.add("hidden");
+
+      const formData = new FormData();
+      formData.append("image", file);
+
+      try {
+        const res = await fetch("http://localhost:4000/api/detect", {
+          method: "POST",
+          body: formData
+        });
+
+        const data = await res.json();
+        loader.classList.add("hidden");
+        output.classList.remove("hidden");
+
+        if (data.error) {
+          output.innerHTML = `<div class="text-red-400 text-center">⚠️ ${data.error}</div>`;
+          return;
+        }
+
+        if (data.message) {
+          output.innerHTML = `
+            <div class="text-center text-green-400 font-bold text-xl">
+              🌿 ${data.message}
+            </div>`;
+          return;
+        }
+
+        output.innerHTML = `
+          <h2 class="text-xl font-bold text-green-400 mb-2">🦠 Disease Detected</h2>
+          <div class="mt-2">
+            <div class="text-gray-300 text-sm">Disease Name</div>
+            <div class="text-lg font-semibold">${data.disease}</div>
+          </div>
+
+          <div class="mt-3">
+            <div class="text-gray-300 text-sm">Confidence</div>
+            <div class="text-md font-semibold">${data.probability}%</div>
+          </div>
+
+          <div class="mt-3">
+            <div class="text-gray-300 text-sm">Description</div>
+            <div class="text-md leading-relaxed">${data.description}</div>
+          </div>
+
+          <div class="mt-3">
+            <div class="text-gray-300 text-sm">Treatment</div>
+            <div class="text-md leading-relaxed">${data.treatment}</div>
+          </div>
+        `;
+      } catch (err) {
+        loader.classList.add("hidden");
+        output.classList.remove("hidden");
+        output.innerHTML = `<div class="text-red-400 text-center">⚠️ ${err.message}</div>`;
+      }
+    }
+  </script>
+
+</body>
+</html>
