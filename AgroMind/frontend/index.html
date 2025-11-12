@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AgroMind Community</title>
+  <link rel="stylesheet" href="./styles.css"/>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>AgroMind — Community</h1>
+      <div class="lang-select">
+        <label for="lang">Language:</label>
+        <select id="lang">
+          <option value="en">English</option>
+          <option value="kn">Kannada</option>
+          <option value="hi">Hindi</option>
+          <option value="ta">Tamil</option>
+        </select>
+      </div>
+    </header>
+
+    <section class="auth">
+      <h2>Login (OTP)</h2>
+      <input id="phone" placeholder="+91XXXXXXXXXX"/>
+      <input id="name" placeholder="Your Name"/>
+      <button id="sendOtpBtn">Send OTP</button>
+      <input id="otp" placeholder="Enter OTP"/>
+      <button id="verifyOtpBtn">Verify OTP</button>
+      <div id="authStatus"></div>
+    </section>
+
+    <section class="groups">
+      <h2>Groups</h2>
+      <div class="create-group">
+        <input id="groupName" placeholder="New group name"/>
+        <input id="groupDesc" placeholder="Description (optional)"/>
+        <button id="createGroupBtn">Create Group</button>
+      </div>
+      <ul id="groupList"></ul>
+    </section>
+
+    <section class="invite">
+      <h3>Invite</h3>
+      <button id="inviteLinkBtn">Get Invite Link</button>
+      <button id="inviteQrBtn">Get QR Code</button>
+      <div id="inviteOutput"></div>
+    </section>
+
+    <section class="chat">
+      <h2>Chat</h2>
+      <div id="currentGroup">No group selected</div>
+      <div class="composer">
+        <textarea id="msgText" placeholder="Type your message..."></textarea>
+        <input type="file" id="msgImage" accept="image/*"/>
+        <input id="parentId" placeholder="Reply to messageId (optional)"/>
+        <button id="sendBtn">Send</button>
+        <button id="syncBtn">Sync Offline</button>
+      </div>
+      <ul id="messages"></ul>
+    </section>
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="https://unpkg.com/localforage@1.10.0/dist/localforage.js"></script>
+
+  <script src="./i18n/en.js"></script>
+  <script src="./i18n/kn.js"></script>
+  <script src="./i18n/hi.js"></script>
+  <script src="./i18n/ta.js"></script>
+
+  <script src="./main.js"></script>
+</body>
+</html>
